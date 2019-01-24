@@ -1,5 +1,5 @@
-defmodule ProjectionWeb.PageControllerTest do
-  use ProjectionWeb.ConnCase
+defmodule RoundWeb.PageControllerTest do
+  use RoundWeb.ConnCase
 
   test "GET /", %{conn: conn} do
     conn = get(conn, "/")

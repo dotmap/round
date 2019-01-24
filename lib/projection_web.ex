@@ -1,12 +1,12 @@
-defmodule ProjectionWeb do
+defmodule RoundWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, views, channels and so on.
 
   This can be used in your application as:
 
-      use ProjectionWeb, :controller
-      use ProjectionWeb, :view
+      use RoundWeb, :controller
+      use RoundWeb, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -19,25 +19,25 @@ defmodule ProjectionWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: ProjectionWeb
+      use Phoenix.Controller, namespace: RoundWeb
 
       import Plug.Conn
-      import ProjectionWeb.Gettext
-      alias ProjectionWeb.Router.Helpers, as: Routes
+      import RoundWeb.Gettext
+      alias RoundWeb.Router.Helpers, as: Routes
     end
   end
 
   def view do
     quote do
       use Phoenix.View,
-        root: "lib/projection_web/templates",
-        namespace: ProjectionWeb
+        root: "lib/round_web/templates",
+        namespace: RoundWeb
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
 
-      import ProjectionWeb.Gettext
-      alias ProjectionWeb.Router.Helpers, as: Routes
+      import RoundWeb.Gettext
+      alias RoundWeb.Router.Helpers, as: Routes
     end
   end
 
@@ -52,7 +52,7 @@ defmodule ProjectionWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import ProjectionWeb.Gettext
+      import RoundWeb.Gettext
     end
   end
 

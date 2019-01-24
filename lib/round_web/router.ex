@@ -1,5 +1,5 @@
-defmodule ProjectionWeb.Router do
-  use ProjectionWeb, :router
+defmodule RoundWeb.Router do
+  use RoundWeb, :router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -13,14 +13,14 @@ defmodule ProjectionWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", ProjectionWeb do
+  scope "/", RoundWeb do
     pipe_through :browser
 
     get "/*path", PageController, :index
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", ProjectionWeb do
+  # scope "/api", RoundWeb do
   #   pipe_through :api
   # end
 end

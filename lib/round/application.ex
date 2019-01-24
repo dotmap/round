@@ -1,4 +1,4 @@
-defmodule Projection.Application do
+defmodule Round.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -9,22 +9,22 @@ defmodule Projection.Application do
     # List all child processes to be supervised
     children = [
       # Start the endpoint when the application starts
-      ProjectionWeb.Endpoint,
-      ProjectionWeb.Presence
-      # Starts a worker by calling: Projection.Worker.start_link(arg)
-      # {Projection.Worker, arg},
+      RoundWeb.Endpoint,
+      RoundWeb.Presence
+      # Starts a worker by calling: Round.Worker.start_link(arg)
+      # {Round.Worker, arg},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Projection.Supervisor]
+    opts = [strategy: :one_for_one, name: Round.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
   def config_change(changed, _new, removed) do
-    ProjectionWeb.Endpoint.config_change(changed, removed)
+    RoundWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 end

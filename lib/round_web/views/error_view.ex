@@ -1,5 +1,5 @@
-defmodule ProjectionWeb.ErrorView do
-  use ProjectionWeb, :view
+defmodule RoundWeb.ErrorView do
+  use RoundWeb, :view
 
   # If you want to customize a particular status code
   # for a certain format, you may uncomment below.

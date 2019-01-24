@@ -1,9 +1,9 @@
-defmodule Projection.MixProject do
+defmodule Round.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :projection,
+      app: :round,
       version: "0.1.0",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -18,7 +18,7 @@ defmodule Projection.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Projection.Application, []},
+      mod: {Round.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

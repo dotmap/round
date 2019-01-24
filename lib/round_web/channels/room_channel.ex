@@ -1,6 +1,6 @@
-defmodule ProjectionWeb.RoomChannel do
-  use ProjectionWeb, :channel
-  alias ProjectionWeb.Presence
+defmodule RoundWeb.RoomChannel do
+  use RoundWeb, :channel
+  alias RoundWeb.Presence
 
   def join("room:" <> room_id, _payload, socket) do
     send(self(), :after_join)

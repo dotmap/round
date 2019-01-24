@@ -8,11 +8,11 @@
 use Mix.Config
 
 # Configures the endpoint
-config :projection, ProjectionWeb.Endpoint,
+config :round, RoundWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "FriVGl3mmI6Lp+07pc/HKXZQ1/a5vdaoJBdsb+clXMDo6fEhHhQlo4ocbCHi9NeZ",
-  render_errors: [view: ProjectionWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Projection.PubSub, adapter: Phoenix.PubSub.PG2]
+  render_errors: [view: RoundWeb.ErrorView, accepts: ~w(html json)],
+  pubsub: [name: Round.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,

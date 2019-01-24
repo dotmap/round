@@ -1,7 +1,7 @@
-defmodule ProjectionWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :projection
+defmodule RoundWeb.Endpoint do
+  use Phoenix.Endpoint, otp_app: :round
 
-  socket "/socket", ProjectionWeb.UserSocket,
+  socket "/socket", RoundWeb.UserSocket,
     websocket: true,
     longpoll: false
 
@@ -11,7 +11,7 @@ defmodule ProjectionWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :projection,
+    from: :round,
     gzip: false,
     only: ~w(images dist favicon.ico robots.txt)
 
@@ -39,8 +39,8 @@ defmodule ProjectionWeb.Endpoint do
   # Set :encryption_salt if you would also like to encrypt it.
   plug Plug.Session,
     store: :cookie,
-    key: "_projection_key",
+    key: "_round_key",
     signing_salt: "rLbQX6gN"
 
-  plug ProjectionWeb.Router
+  plug RoundWeb.Router
 end

@@ -1,4 +1,4 @@
-defmodule ProjectionWeb.Presence do
+defmodule RoundWeb.Presence do
   @moduledoc """
   Provides presence tracking to channels and processes.
 
@@ -9,9 +9,9 @@ defmodule ProjectionWeb.Presence do
 
   Presences can be tracked in your channel after joining:
 
-      defmodule Projection.MyChannel do
-        use ProjectionWeb, :channel
-        alias ProjectionWeb.Presence
+      defmodule Round.MyChannel do
+        use RoundWeb, :channel
+        alias RoundWeb.Presence
 
         def join("some:topic", _params, socket) do
           send(self(), :after_join)
@@ -68,6 +68,7 @@ defmodule ProjectionWeb.Presence do
   information, while maintaining the required `:metas` field from the
   original presence data.
   """
-  use Phoenix.Presence, otp_app: :projection,
-                        pubsub_server: Projection.PubSub
+  use Phoenix.Presence,
+    otp_app: :round,
+    pubsub_server: Round.PubSub
 end

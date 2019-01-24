@@ -1,6 +1,6 @@
-defmodule Projection do
+defmodule Round do
   @moduledoc """
-  Projection keeps the contexts that define your domain
+  Round keeps the contexts that define your domain
   and business logic.
 
   Contexts are also responsible for managing your data, regardless

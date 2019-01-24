@@ -1,3 +1,3 @@
-defmodule ProjectionWeb.PageViewTest do
-  use ProjectionWeb.ConnCase, async: true
+defmodule RoundWeb.PageViewTest do
+  use RoundWeb.ConnCase, async: true
 end
