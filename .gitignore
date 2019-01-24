@@ -43,3 +43,6 @@ npm-debug.log
 
 # Language server output
 .elixir_ls
+
+# Weird macOS output files
+.DS_Store
