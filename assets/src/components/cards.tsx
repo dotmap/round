@@ -1,5 +1,6 @@
+import { FC } from 'react'
 import styled from '@emotion/styled'
-import { Card as RebassCard, Button, Flex, Box, Text } from '@rebass/emotion'
+import { Button, Flex, Text } from '@rebass/emotion'
 
 const CardBase = styled(Button)`
   display: grid;
@@ -8,18 +9,27 @@ const CardBase = styled(Button)`
   height: 350px;
   width: 250px;
   box-shadow: 0 2px 21px
-    ${props =>
+    ${(props: { selected: boolean; unselected: boolean }) =>
       props.selected
         ? 'rgba(76, 255, 190, 0.45)'
         : props.unselected
         ? 'none'
         : 'rgba(0, 0, 0, 0.15)'};
-  background: ${props => (props.selected ? 'rgba(76, 255, 190, 1)' : 'white')};
+  background: ${(props: { selected: boolean }) =>
+    props.selected ? 'rgba(76, 255, 190, 1)' : 'white'};
   color: black;
 `
 
-const Card = ({ value, submit, active, unselected, selectors }) => (
-  <CardBase m={3} onClick={() => submit(value)} selected={active} unselected={unselected}>
+interface CardProps {
+  value: string
+  submit?: (value: string) => void
+  active: boolean
+  unselected?: boolean
+  selectors?: string[]
+}
+
+const Card: FC<CardProps> = ({ value, submit, active, unselected, selectors }) => (
+  <CardBase m={3} onClick={() => submit && submit(value)} selected={active} unselected={unselected}>
     {selectors && (
       <Flex m={3} flexDirection="row" justifyContent="space-between">
         <Text fontSize={5}>{`x${selectors.length}`}</Text>
@@ -38,16 +48,28 @@ const Card = ({ value, submit, active, unselected, selectors }) => (
   </CardBase>
 )
 
-const Cards = ({ cards, submit, selected, participants, reveal }) => {
-  let selections, mode
+interface CardsProps {
+  cards: string[]
+  submit: (value: string) => void
+  selected: string
+  participants: Map<string, string>
+  reveal: boolean
+}
+
+const Cards: FC<CardsProps> = ({ cards, submit, selected, participants, reveal }) => {
+  let selections: { [index: string]: string[] } = {}
+  let mode: number
   if (participants) {
-    selections = cards.reduce((obj, value) => {
-      obj[value] = []
-      for (const participant of participants) {
-        if (participant[1] === value) obj[value].push(participant[0])
-      }
-      return obj
-    }, {})
+    selections = cards.reduce(
+      (obj, value) => {
+        obj[value] = []
+        for (const participant of participants) {
+          if (participant[1] === value) obj[value].push(participant[0])
+        }
+        return obj
+      },
+      {} as { [index: string]: string[] }
+    )
 
     mode = Math.max.apply(null, Object.values(selections).map(s => s.length))
   }
@@ -78,7 +100,7 @@ const Cards = ({ cards, submit, selected, participants, reveal }) => {
                 key={v}
                 value={v}
                 active={v === selected}
-                unselected={selected !== false && v !== selected}
+                unselected={selected.length > 0 && v !== selected}
                 submit={submit}
               />
             )

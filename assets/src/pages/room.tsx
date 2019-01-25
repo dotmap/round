@@ -1,22 +1,40 @@
-import store, { set } from 'store2'
-import { Presence } from 'phoenix'
-import { Box, Flex, Text, Button, Card } from '@rebass/emotion'
-import { useState, useEffect, Fragment, lazy, Suspense } from 'react'
+import { session } from 'store2'
+import { RouteComponentProps } from '@reach/router'
+import { FC, FormEvent, Fragment, useState } from 'react'
+import { Box, Button, Card, Flex, Text } from '@rebass/emotion'
+import { Channel, ChannelCallback, Presence, Socket } from 'phoenix'
 
-import { buildSocket } from '../utils/socket'
-import Controls from '../components/controls'
 import Cards from '../components/cards'
 import Footer from '../components/footer'
-import Participants from '../components/participants'
+import Controls from '../components/controls'
+import { buildSocket } from '../utils/socket'
 import Highlight from '../components/highlight'
+import Participants from '../components/participants'
+import { Content, FooterContainer, GridContainer, Header } from '../components/grid'
 
-import { GridContainer, Header, Content, FooterContainer } from '../components/grid'
+let socket: Socket<any> | undefined, presence: Presence | undefined
+let channel: Channel<any, {}, EstimateMessage & ElectMessage & RevealMessage>
+const estimateValues = ['0', '1', '2', '3', '5', '8', '13', '20', '40']
 
-let socket, channel, presence
-const estimateValues = [0, 1, 2, 3, 5, 8, 13, 20, 40]
+interface RoomProps extends RouteComponentProps {
+  roomName?: string
+}
 
-const Room = ({ roomName }) => {
-  const [estimate, setEstimate] = useState(false)
+interface EstimateMessage {
+  user: string
+  estimate: number
+}
+
+interface ElectMessage {
+  leader: boolean
+}
+
+interface RevealMessage {
+  show: true
+}
+
+const Room: FC<RoomProps> = ({ roomName }) => {
+  const [estimate, setEstimate] = useState('')
   const [leader, setLeader] = useState(false)
   const [username, setUsername] = useState('')
   const [estimated, setEstimated] = useState(false)
@@ -24,7 +42,7 @@ const Room = ({ roomName }) => {
   const [nameSelected, setNameSelected] = useState(false)
   const [participants, setParticipants] = useState(new Map())
 
-  const sendEstimate = estimate => {
+  const sendEstimate = (estimate: string): void => {
     if (!revealing) {
       channel.push('estimate', { estimate, user: username })
       setEstimate(estimate)
@@ -33,16 +51,19 @@ const Room = ({ roomName }) => {
   }
 
   const sendShow = () => {
-    if (store.has(roomName) && store(roomName).leader) channel.push('show')
+    if (session.has(roomName) && session(roomName).leader) channel.push('show', { show: true })
   }
 
   const sendReset = () => {
-    if (store.has(roomName) && store(roomName).leader) channel.push('reset')
+    if (session.has(roomName) && session(roomName).leader) channel.push('reset', { reset: true })
   }
+
+  const estimateHandler: ChannelCallback<EstimateMessage> = ({ user, estimate }) =>
+    setParticipants(participants.set(user, estimate))
 
   const reset = () => {
     setEstimated(false)
-    setEstimate(false)
+    setEstimate('')
     setRevealing(false)
 
     let resetParticipants = participants
@@ -55,16 +76,14 @@ const Room = ({ roomName }) => {
     channel = socket.channel(`room:${roomName}`)
     presence = new Presence(channel)
 
-    channel.on('estimate', ({ user, estimate }) => {
-      setParticipants(participants.set(user, estimate))
-    })
+    channel.on('estimate', estimateHandler)
 
     channel.on('become_leader', ({ leader }) => {
-      store(roomName, { leader })
+      session(roomName, { leader })
       setLeader(leader)
     })
 
-    channel.on('show', ({ show }) => setRevealing(show))
+    channel.on('show', ({ show }: RevealMessage) => setRevealing(show))
 
     channel.on('reset', reset)
 
@@ -93,7 +112,7 @@ const Room = ({ roomName }) => {
             as="input"
             type="text"
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={(e: FormEvent<HTMLInputElement>) => setUsername(e.currentTarget.value)}
           />
           <Button onClick={() => setNameSelected(true)}>Submit</Button>
         </Box>

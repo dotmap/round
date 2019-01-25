@@ -10,17 +10,18 @@ module.exports = (env, options) => ({
   optimization: {
     minimizer: [new UglifyJsPlugin({ cache: true, parallel: true, sourceMap: false })]
   },
-  entry: './src/index.jsx',
+  entry: './src/index.tsx',
   devtool: 'eval',
   output: {
     filename: '[name].app.js',
     path: path.resolve(__dirname, '../priv/static/dist'),
     publicPath: '/dist/'
   },
+  resolve: { extensions: ['.tsx', '.ts', '.js'] },
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.tsx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader'

@@ -1,8 +1,9 @@
 import mngen from 'mngen'
-import { Link } from '@reach/router'
+import { Link, RouteComponentProps } from '@reach/router'
 import { Button } from '@rebass/emotion'
+import { FC } from 'react'
 
-const Home = () => {
+const Home: FC<RouteComponentProps> = () => {
   const name = mngen.word(3)
 
   return (

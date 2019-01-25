@@ -5,7 +5,6 @@ import { Global } from '@emotion/core'
 
 const Home = lazy(() => import(/* webpackChunkName: "home" */ './pages/home'))
 const Room = lazy(() => import(/* webpackChunkName: "room" */ './pages/room'))
-const Format = lazy(() => import(/* webpackChunkName: "format" */ './pages/format'))
 
 const App = () => (
   <Fragment>
@@ -25,7 +24,6 @@ const App = () => (
       <Router>
         <Home path="/" />
         <Room path="/room/:roomName" />
-        <Format path="/format" />
       </Router>
     </Suspense>
   </Fragment>

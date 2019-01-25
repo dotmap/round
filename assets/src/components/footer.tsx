@@ -1,5 +1,4 @@
-import styled from '@emotion/styled'
-import { Coffee, GitHub } from 'react-feather'
+import { Coffee, Sun } from 'react-feather'
 import { Flex, Image, Link } from '@rebass/emotion'
 
 const Footer = () => (
@@ -15,7 +14,7 @@ const Footer = () => (
       justifyContent="center"
       alignItems="center"
     >
-      <Coffee size="18" />
+      <Sun size="18" />
     </Flex>
     <Link href="https://dotmap.co" mx={4}>
       <Image width="50px" src="/images/icon.png" />
@@ -31,7 +30,7 @@ const Footer = () => (
       justifyContent="center"
       alignItems="center"
     >
-      <GitHub size="18" />
+      <Coffee size="18" />
     </Flex>
   </Flex>
 )
