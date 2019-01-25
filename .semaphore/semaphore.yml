@@ -45,6 +45,7 @@ blocks:
       jobs:
         - name: ExUnit tests
           commands:
+            - mix local.rebar --force
             - mix test
         - name: Jest tests
           commands:
