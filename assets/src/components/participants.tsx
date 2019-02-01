@@ -5,7 +5,9 @@ import { Flex, Card, Heading } from '@rebass/emotion'
 
 const Dot = styled.div`
   background: ${(props: { submitted: string }) =>
-    props.submitted.length > 0 ? 'rgba(76, 255, 190, 1)' : 'rgba(255, 19, 175, 1)'};
+    props.submitted.length > 0
+      ? 'rgba(76, 255, 190, 1)'
+      : 'rgba(255, 19, 175, 1)'};
   border-radius: 100%;
   width: 1rem;
   height: 1rem;
@@ -19,7 +21,8 @@ const StyledPopover = styled(Popover)`
     padding: 8px;
     background: ${(props: { estimated: boolean }) =>
       props.estimated ? 'rgba(76, 255, 190, 1)' : 'rgba(255, 19, 175, 1)'};
-    color: ${(props: { estimated: boolean }) => (props.estimated ? 'black' : 'white')};
+    color: ${(props: { estimated: boolean }) =>
+      props.estimated ? 'black' : 'white'};
     border-radius: 5px;
   }
 
@@ -38,7 +41,12 @@ const Participant: FC<ParticipantProps> = ({ name, estimate }) => {
   const [hovered, setHovered] = useState(false)
 
   return (
-    <StyledPopover isOpen={hovered} preferPlace="below" body={name} estimated={estimate.length > 0}>
+    <StyledPopover
+      isOpen={hovered}
+      preferPlace="below"
+      body={name}
+      estimated={estimate.length > 0}
+    >
       <Flex alignItems="center">
         <Dot
           onMouseEnter={() => setHovered(true)}

@@ -8,8 +8,17 @@ interface ControlsProps {
 }
 
 const Controls: FC<ControlsProps> = ({ leader, reveal, reset }) => (
-  <Card mt={3} boxShadow="0 2px 21px rgba(0,0,0,0.15)" borderRadius="7px" p={3} bg="white">
-    <Flex justifyContent={leader ? 'space-between' : 'flex-start'} alignItems="center">
+  <Card
+    mt={3}
+    boxShadow="0 2px 21px rgba(0,0,0,0.15)"
+    borderRadius="7px"
+    p={3}
+    bg="white"
+  >
+    <Flex
+      justifyContent={leader ? 'space-between' : 'flex-start'}
+      alignItems="center"
+    >
       <Heading>Controls</Heading>
       {leader && (
         <Text
@@ -26,7 +35,13 @@ const Controls: FC<ControlsProps> = ({ leader, reveal, reset }) => (
     </Flex>
     {leader && (
       <Fragment>
-        <Button width={1} py={3} mt={3} bg="rgba(76, 255, 190, 1)" onClick={() => reveal()}>
+        <Button
+          width={1}
+          py={3}
+          mt={3}
+          bg="rgba(76, 255, 190, 1)"
+          onClick={() => reveal()}
+        >
           <Text color="black">Reveal Results</Text>
         </Button>
         <Button width={1} py={3} mt={2} bg="gainsboro" onClick={() => reset()}>

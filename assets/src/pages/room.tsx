@@ -10,7 +10,12 @@ import Controls from '../components/controls'
 import { buildSocket } from '../utils/socket'
 import Highlight from '../components/highlight'
 import Participants from '../components/participants'
-import { Content, FooterContainer, GridContainer, Header } from '../components/grid'
+import {
+  Content,
+  FooterContainer,
+  GridContainer,
+  Header
+} from '../components/grid'
 
 let socket: Socket<any> | undefined, presence: Presence | undefined
 let channel: Channel<any, {}, EstimateMessage & ElectMessage & RevealMessage>
@@ -51,15 +56,19 @@ const Room: FC<RoomProps> = ({ roomName }) => {
   }
 
   const sendShow = () => {
-    if (session.has(roomName) && session(roomName).leader) channel.push('show', { show: true })
+    if (session.has(roomName) && session(roomName).leader)
+      channel.push('show', { show: true })
   }
 
   const sendReset = () => {
-    if (session.has(roomName) && session(roomName).leader) channel.push('reset', { reset: true })
+    if (session.has(roomName) && session(roomName).leader)
+      channel.push('reset', { reset: true })
   }
 
-  const estimateHandler: ChannelCallback<EstimateMessage> = ({ user, estimate }) =>
-    setParticipants(participants.set(user, estimate))
+  const estimateHandler: ChannelCallback<EstimateMessage> = ({
+    user,
+    estimate
+  }) => setParticipants(participants.set(user, estimate))
 
   const reset = () => {
     setEstimated(false)
@@ -112,7 +121,9 @@ const Room: FC<RoomProps> = ({ roomName }) => {
             as="input"
             type="text"
             value={username}
-            onChange={(e: FormEvent<HTMLInputElement>) => setUsername(e.currentTarget.value)}
+            onChange={(e: FormEvent<HTMLInputElement>) =>
+              setUsername(e.currentTarget.value)
+            }
           />
           <Button onClick={() => setNameSelected(true)}>Submit</Button>
         </Box>
@@ -121,12 +132,21 @@ const Room: FC<RoomProps> = ({ roomName }) => {
           <Header bg="white">
             <Highlight />
           </Header>
-          <Content mt={3} p={3} flexDirection={['column', null, 'row']} justifyContent="center">
+          <Content
+            mt={3}
+            p={3}
+            flexDirection={['column', null, 'row']}
+            justifyContent="center"
+          >
             <Flex justifyContent={['center', null, 'flex-end']} my={3} px={3}>
               <Flex flexDirection="column">
                 <Box css={{ position: 'sticky', top: 32 }}>
                   <Participants participants={participants} />
-                  <Controls leader={leader} reveal={sendShow} reset={sendReset} />
+                  <Controls
+                    leader={leader}
+                    reveal={sendShow}
+                    reset={sendReset}
+                  />
                 </Box>
               </Flex>
             </Flex>

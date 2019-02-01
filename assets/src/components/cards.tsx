@@ -28,8 +28,19 @@ interface CardProps {
   selectors?: string[]
 }
 
-const Card: FC<CardProps> = ({ value, submit, active, unselected, selectors }) => (
-  <CardBase m={3} onClick={() => submit && submit(value)} selected={active} unselected={unselected}>
+const Card: FC<CardProps> = ({
+  value,
+  submit,
+  active,
+  unselected,
+  selectors
+}) => (
+  <CardBase
+    m={3}
+    onClick={() => submit && submit(value)}
+    selected={active}
+    unselected={unselected}
+  >
     {selectors && (
       <Flex m={3} flexDirection="row" justifyContent="space-between">
         <Text fontSize={5}>{`x${selectors.length}`}</Text>
@@ -40,7 +51,12 @@ const Card: FC<CardProps> = ({ value, submit, active, unselected, selectors }) =
         </Flex>
       </Flex>
     )}
-    <Flex px={2} alignItems="flex-end" justifyContent="flex-start" css={{ height: '100%' }}>
+    <Flex
+      px={2}
+      alignItems="flex-end"
+      justifyContent="flex-start"
+      css={{ height: '100%' }}
+    >
       <Text fontSize={128} color={unselected ? 'gainsboro' : 'black'}>
         {value}
       </Text>
@@ -56,20 +72,23 @@ interface CardsProps {
   reveal: boolean
 }
 
-const Cards: FC<CardsProps> = ({ cards, submit, selected, participants, reveal }) => {
+const Cards: FC<CardsProps> = ({
+  cards,
+  submit,
+  selected,
+  participants,
+  reveal
+}) => {
   let selections: { [index: string]: string[] } = {}
   let mode: number
   if (participants) {
-    selections = cards.reduce(
-      (obj, value) => {
-        obj[value] = []
-        for (const participant of participants) {
-          if (participant[1] === value) obj[value].push(participant[0])
-        }
-        return obj
-      },
-      {} as { [index: string]: string[] }
-    )
+    cards.reduce((obj, value) => {
+      obj[value] = []
+      for (const participant of participants) {
+        if (participant[1] === value) obj[value].push(participant[0])
+      }
+      return obj
+    }, selections)
 
     mode = Math.max.apply(null, Object.values(selections).map(s => s.length))
   }

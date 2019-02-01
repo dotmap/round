@@ -1,4 +1,4 @@
-import { lazy, Suspense, Fragment } from 'react'
+import { lazy, Suspense, Fragment, FC } from 'react'
 import { render } from 'react-dom'
 import { Router } from '@reach/router'
 import { Global } from '@emotion/core'
@@ -6,7 +6,7 @@ import { Global } from '@emotion/core'
 const Home = lazy(() => import(/* webpackChunkName: "home" */ './pages/home'))
 const Room = lazy(() => import(/* webpackChunkName: "room" */ './pages/room'))
 
-const App = () => (
+const App: FC = () => (
   <Fragment>
     <Global
       styles={{
