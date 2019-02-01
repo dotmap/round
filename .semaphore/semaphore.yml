@@ -65,6 +65,7 @@ blocks:
             - npm test
         - name: Credo
           commands:
+            - mix local.rebar --force
             - mix credo
         - name: ESLint
           commands:
