@@ -3,9 +3,14 @@ defmodule RoundWeb.RoomChannel do
   alias RoundWeb.Presence
 
   def join("room:" <> room_id, _payload, socket) do
-    send(self(), :after_join)
+    case length(String.split(room_id, "-")) do
+      3 ->
+        send(self(), :after_join)
+        {:ok, %{room: room_id}, socket}
 
-    {:ok, %{room: room_id}, socket}
+      _ ->
+        {:error, %{reason: "invalid room name"}}
+    end
   end
 
   # Channels can be used in a request/response fashion

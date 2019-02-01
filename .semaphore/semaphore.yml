@@ -27,6 +27,18 @@ blocks:
             - npm install
             - cache store node-modules-$SEMAPHORE_GIT_BRANCH-$(checksum package-lock.json) node_modules
 
+  - name: Build
+    task:
+      prologue:
+        commands:
+          - checkout
+          - cd assets
+          - cache restore node-modules-$SEMAPHORE_GIT_BRANCH-$(checksum package-lock.json),node-modules-$SEMAPHORE_GIT_BRANCH,node-modules-master
+      jobs:
+        - name: run webpack
+          commands:
+            - npm run deploy
+
   - name: Run tests
     task:
       env_vars:
@@ -40,7 +52,7 @@ blocks:
           - cache restore mix-deps-$SEMAPHORE_GIT_BRANCH-$(checksum mix.lock),mix-deps-$SEMAPHORE_GIT_BRANCH,mix-deps-master
           - cache restore mix-build-$SEMAPHORE_GIT_BRANCH-$(checksum mix.lock),mix-build-$SEMAPHORE_GIT_BRANCH,mix-build-master
           - cd assets
-          - cache restore node-modules-$SEMAPHORE_GIT_BRANCH-$(checksum packag-lock.json),node-modules-$SEMAPHORE_GIT_BRANCH,node-modules-master
+          - cache restore node-modules-$SEMAPHORE_GIT_BRANCH-$(checksum package-lock.json),node-modules-$SEMAPHORE_GIT_BRANCH,node-modules-master
           - cd ..
       jobs:
         - name: ExUnit tests
@@ -51,3 +63,10 @@ blocks:
           commands:
             - cd assets
             - npm test
+        - name: Credo
+          commands:
+            - mix credo
+        - name: ESLint
+          commands:
+            - cd assets
+            - npm run lint
