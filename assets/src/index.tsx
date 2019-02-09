@@ -3,6 +3,8 @@ import { render } from 'react-dom'
 import { Router } from '@reach/router'
 import { Global } from '@emotion/core'
 
+import Highlight from './components/highlight'
+
 const Home = lazy(() => import(/* webpackChunkName: "home" */ './pages/home'))
 const Room = lazy(() => import(/* webpackChunkName: "room" */ './pages/room'))
 
@@ -16,10 +18,11 @@ const App: FC = () => (
             'rgba(0, 0, 0, 0) url("https://www.toptal.com/designers/subtlepatterns/patterns/geometry.png") repeat scroll 0% 0%'
         },
         html: {
-          fontFamily: 'Inter UI, -apple-system, sans-serif'
+          fontFamily: 'Inter, -apple-system, sans-serif'
         }
       }}
     />
+    <Highlight />
     <Suspense fallback={<p>Loading</p>}>
       <Router>
         <Home path="/" />
