@@ -1,7 +1,8 @@
 import { FC, useState } from 'react'
 import styled from '@emotion/styled'
 import Popover from 'react-popover'
-import { Flex, Card, Heading } from '@rebass/emotion'
+import { MoreHorizontal } from 'react-feather'
+import { Flex, Card } from '@rebass/emotion'
 
 const Dot = styled.div`
   background: ${(props: { submitted: string }) =>
@@ -65,20 +66,26 @@ interface ParticipantsProps {
 const Participants: FC<ParticipantsProps> = ({ participants }) => {
   return (
     <Card
-      boxShadow="0 2px 21px rgba(0,0,0,0.15)"
-      borderRadius="7px"
+      boxShadow={[0]}
+      borderRadius="default"
       p={3}
-      width={'300px'}
       bg="white"
+      css={{
+        gridArea: 'participants'
+      }}
     >
-      <Heading>Participants</Heading>
-
-      <Flex mt={3} flexDirection="row" justifyContent="space-evenly">
-        {Array.from(participants).map(([participant, estimate]) => (
-          <Flex key={participant} alignItems="center" my={2}>
-            <Participant name={participant} estimate={estimate} />
-          </Flex>
-        ))}
+      <Flex justifyContent="center">
+        <MoreHorizontal />
+      </Flex>
+      <Flex mt={1} justifyContent="center" alignItems="space-evenly">
+        {Array.from(participants).map(([participant, estimate]) => {
+          console.log('listing', participant, estimate)
+          return (
+            <Flex key={participant} alignItems="center" my={2}>
+              <Participant name={participant} estimate={estimate} />
+            </Flex>
+          )
+        })}
       </Flex>
     </Card>
   )
