@@ -2,7 +2,10 @@ import { lazy, Suspense, Fragment, FC } from 'react'
 import { render } from 'react-dom'
 import { Router } from '@reach/router'
 import { Global } from '@emotion/core'
+import { ThemeProvider } from 'emotion-theming'
 
+import theme from './theme'
+import Loading from './components/loading'
 import Highlight from './components/highlight'
 
 const Home = lazy(() => import(/* webpackChunkName: "home" */ './pages/home'))
@@ -22,13 +25,15 @@ const App: FC = () => (
         }
       }}
     />
-    <Highlight />
-    <Suspense fallback={<p>Loading</p>}>
-      <Router>
-        <Home path="/" />
-        <Room path="/room/:roomName" />
-      </Router>
-    </Suspense>
+    <ThemeProvider theme={theme}>
+      <Highlight />
+      <Suspense fallback={<Loading />}>
+        <Router>
+          <Home path="/" />
+          <Room path="/room/:room" />
+        </Router>
+      </Suspense>
+    </ThemeProvider>
   </Fragment>
 )
 
