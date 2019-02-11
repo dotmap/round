@@ -2,6 +2,7 @@ import { Socket } from 'phoenix'
 
 export const buildSocket = (username: string) => {
   const socket = new Socket('/socket', {
+    /* eslint-disable-next-line @typescript-eslint/camelcase */
     params: { user_id: username },
     logger: (kind, msg, data) => console.log(`${kind}: ${msg}`, data)
   })
