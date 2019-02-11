@@ -1,8 +1,10 @@
-import { FC } from 'react'
+import { FC, useRef, ReactInstance, useEffect } from 'react'
 import styled from '@emotion/styled'
+import { findDOMNode } from 'react-dom'
+import { useSpring, useTransition, animated } from 'react-spring'
 import { Button, Flex, Text } from '@rebass/emotion'
 
-const CardBase = styled(Button)`
+const CardBase = animated(styled(Button)`
   display: grid;
   box-sizing: border-box;
   border-radius: 7px;
@@ -18,7 +20,7 @@ const CardBase = styled(Button)`
   background: ${(props: { selected: boolean }) =>
     props.selected ? 'rgba(76, 255, 190, 1)' : 'white'};
   color: black;
-`
+`)
 
 interface CardProps {
   value: string
@@ -34,35 +36,92 @@ const Card: FC<CardProps> = ({
   active,
   unselected,
   selectors
-}) => (
-  <CardBase
-    m={3}
-    onClick={() => submit && submit(value)}
-    selected={active}
-    unselected={unselected}
-  >
-    {selectors && (
-      <Flex m={3} flexDirection="row" justifyContent="space-between">
-        <Text fontSize={5}>{`x${selectors.length}`}</Text>
-        <Flex flexDirection="column" alignItems="flex-end">
-          {selectors.map(name => (
-            <Text key={name}>{name}</Text>
-          ))}
-        </Flex>
-      </Flex>
-    )}
-    <Flex
-      px={2}
-      alignItems="flex-end"
-      justifyContent="flex-start"
-      css={{ height: '100%' }}
+}) => {
+  const [tiltProps, setTilt] = useSpring(() => ({
+    xys: [0, 0, 1],
+    config: { mass: 1, tension: 500, friction: 20 }
+  }))
+
+  const [colorProps, setColors] = useSpring(() => ({
+    background: 'white',
+    boxShadow: '0 2px 21px rgba(0,0,0,0.15)',
+    color: 'black',
+    config: { mass: 1, tension: 500, friction: 20 }
+  }))
+
+  const cardRef = useRef(null)
+
+  useEffect(() => {
+    if (active) {
+      setColors({
+        background: 'rgba(76, 255, 190, 1)',
+        boxShadow: '0 2px 21px rgba(76, 255, 190, 0.45)'
+      })
+    } else if (unselected) {
+      setColors({
+        background: 'white',
+        boxShadow: '0 2px 21px rgba(0,0,0,0)',
+        color: 'gainsboro'
+      })
+    }
+  }, [active, unselected])
+
+  const calc = (x: number, y: number) => {
+    if (cardRef.current !== null) {
+      const { x: cardX, y: cardY, width, height } = findDOMNode(
+        cardRef.current as ReactInstance
+      ).getBoundingClientRect()
+
+      return [
+        -(y - (cardY + height / 2)) / 20,
+        (x - (cardX + width / 2)) / 20,
+        1.05
+      ]
+    }
+  }
+  const trans = (x: number, y: number, s: number) =>
+    `perspective(900px) rotateX(${x}deg) rotateY(${y}deg) scale(${s})`
+
+  return (
+    <CardBase
+      onClick={() => {
+        submit && submit(value)
+      }}
+      ref={cardRef}
+      selected={active}
+      unselected={unselected}
+      onPointerMove={({ clientX: x, clientY: y }) =>
+        setTilt({ xys: calc(x, y) })
+      }
+      onPointerLeave={() => setTilt({ xys: [0, 0, 1] })}
+      style={{
+        transform: tiltProps.xys.interpolate(trans),
+        ...colorProps
+      }}
     >
-      <Text fontSize={128} color={unselected ? 'gainsboro' : 'black'}>
-        {value}
-      </Text>
-    </Flex>
-  </CardBase>
-)
+      {selectors && (
+        <Flex m={3} flexDirection="row" justifyContent="space-between">
+          <Text fontSize={5}>{`x${selectors.length}`}</Text>
+          <Flex flexDirection="column" alignItems="flex-end">
+            {selectors.map(name => (
+              <Text key={name}>{name}</Text>
+            ))}
+          </Flex>
+        </Flex>
+      )}
+      <Flex
+        px={2}
+        alignItems="flex-end"
+        justifyContent="flex-start"
+        css={{ height: '100%' }}
+      >
+        <Text fontSize={128} color={unselected ? 'gainsboro' : 'black'}>
+          {value}
+        </Text>
+      </Flex>
+    </CardBase>
+  )
+}
 
 interface CardsProps {
   cards: string[]
@@ -79,6 +138,13 @@ const Cards: FC<CardsProps> = ({
   participants,
   reveal
 }) => {
+  const transitions = useTransition(cards, card => card, {
+    from: { opacity: 0, transform: 'scale(0.75)' },
+    enter: { opacity: 1, transform: 'scale(1)' },
+    leave: { opacity: 0 },
+    trail: 200
+  })
+
   let selections: { [index: string]: string[] } = {}
   let mode: number
   if (participants) {
@@ -96,8 +162,13 @@ const Cards: FC<CardsProps> = ({
   return (
     <Flex
       flexWrap="wrap"
-      justifyContent="center"
-      css={{ alignItems: 'space-around', maxWidth: '860px' }}
+      width={1}
+      css={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        justifyContent: 'center',
+        gridGap: '32px'
+      }}
     >
       {reveal && selections
         ? cards.map(v => {
@@ -112,16 +183,16 @@ const Cards: FC<CardsProps> = ({
               )
             }
           })
-        : cards.map(v => {
-            console.log('selected', selected, 'value', v, v === selected)
+        : transitions.map(({ item, props, key }) => {
             return (
-              <Card
-                key={v}
-                value={v}
-                active={v === selected}
-                unselected={selected.length > 0 && v !== selected}
-                submit={submit}
-              />
+              <animated.div key={key} style={props}>
+                <Card
+                  value={item}
+                  active={item === selected}
+                  unselected={selected.length > 0 && item !== selected}
+                  submit={submit}
+                />
+              </animated.div>
             )
           })}
     </Flex>
