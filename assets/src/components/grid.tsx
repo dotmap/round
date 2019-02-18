@@ -1,10 +1,8 @@
 import styled from '@emotion/styled'
 import { Box, Flex } from '@rebass/emotion'
-import Participants from './participants'
-
 export const Header = styled(Flex)``
 
-export const Status = styled(Flex)``
+export const ParticipantsContainer = styled(Flex)``
 
 export const Content = styled(Flex)`
   min-height: 100%;
@@ -21,8 +19,8 @@ export const GridContainer = styled(Box)`
   grid-template-rows: auto 1fr auto;
   grid-template-columns: 1fr minmax(auto, 815px) 1fr;
   grid-template-areas:
-    '. header .'
-    '. participants .'
+    'edit header .'
+    'graph participants .'
     '. content .'
     'footer footer footer';
 
@@ -32,10 +30,11 @@ export const GridContainer = styled(Box)`
     justify-self: center;
   }
 
-  ${Status} {
-    grid-area: status;
+  ${ParticipantsContainer} {
+    grid-area: participants;
     align-self: center;
-    justify-self: start;
+    justify-self: center;
+    width: 100%;
   }
 
   ${Content} {
