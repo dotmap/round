@@ -10,15 +10,6 @@ const CardBase = animated(styled(Button)`
   border-radius: 7px;
   height: 350px;
   width: 250px;
-  box-shadow: 0 2px 21px
-    ${(props: { selected: boolean; unselected: boolean }) =>
-      props.selected
-        ? 'rgba(76, 255, 190, 0.45)'
-        : props.unselected
-        ? 'none'
-        : 'rgba(0, 0, 0, 0.15)'};
-  background: ${(props: { selected: boolean }) =>
-    props.selected ? 'rgba(76, 255, 190, 1)' : 'white'};
   color: black;
 `)
 
@@ -68,9 +59,14 @@ const Card: FC<CardProps> = ({
 
   const calc = (x: number, y: number) => {
     if (cardRef.current !== null) {
-      const { x: cardX, y: cardY, width, height } = findDOMNode(
-        cardRef.current as ReactInstance
-      ).getBoundingClientRect()
+      const {
+        x: cardX = 0,
+        y: cardY = 0,
+        width = 250,
+        height = 350
+      } = (findDOMNode(
+        (cardRef.current as unknown) as ReactInstance
+      ) as Element).getBoundingClientRect() as DOMRect
 
       return [
         -(y - (cardY + height / 2)) / 20,
@@ -138,7 +134,7 @@ const Cards: FC<CardsProps> = ({
   participants,
   reveal
 }) => {
-  const transitions = useTransition(cards, card => card, {
+  const transitions = useTransition(cards, (card: string) => card, {
     from: { opacity: 0, transform: 'scale(0.75)' },
     enter: { opacity: 1, transform: 'scale(1)' },
     leave: { opacity: 0 },
@@ -161,11 +157,17 @@ const Cards: FC<CardsProps> = ({
 
   return (
     <Flex
-      flexWrap="wrap"
       width={1}
       css={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
+        '@media (max-width: 825px)': {
+          gridTemplateColumns: 'repeat(2, 1fr)'
+        },
+        '@media (max-width: 600px)': {
+          gridTemplateColumns: '1fr'
+        },
+        justifyItems: 'center',
         justifyContent: 'center',
         gridGap: '32px'
       }}
