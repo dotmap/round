@@ -21,8 +21,8 @@ defmodule RoundWeb.RoomChannel do
 
   # It is also common to receive messages from the client and
   # broadcast to everyone in the current topic (room:lobby).
-  def handle_in("shout", payload, socket) do
-    broadcast(socket, "shout", payload)
+  def handle_in("update_title", payload, socket) do
+    broadcast(socket, "update_title", payload)
     {:noreply, socket}
   end
 
