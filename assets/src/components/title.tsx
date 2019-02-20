@@ -66,6 +66,7 @@ const Title: FC<TitleProps> = ({
             onChange={(e: FormEvent<HTMLInputElement>) =>
               setTitle(e.currentTarget.value)
             }
+            onBlur={() => submitTitle && submitTitle(title)}
             mr={3}
             css={{
               hyphens: 'auto',
