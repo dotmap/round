@@ -11,7 +11,7 @@ export const Content = styled(Flex)`
 export const FooterContainer = styled(Box)``
 
 export const GridContainer = styled(Box)`
-  min-height: 100vh;
+  min-height: 100%;
   display: grid;
   grid-gap: 32px;
   align-content: stretch;
