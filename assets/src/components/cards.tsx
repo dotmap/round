@@ -1,11 +1,12 @@
-import { FC, useRef, ReactInstance, useEffect } from 'react'
+import { FC, useRef, ReactInstance, useEffect, Fragment } from 'react'
 import styled from '@emotion/styled'
 import { findDOMNode } from 'react-dom'
 import { useSpring, useTransition, animated } from 'react-spring'
-import { Button, Flex, Text } from '@rebass/emotion'
+import { Box, Button, Flex, Text } from '@rebass/emotion'
 
-const CardBase = animated(styled(Button)`
+const CardBase = animated(styled(Box)`
   display: grid;
+  grid-template-rows: min-content auto;
   box-sizing: border-box;
   border-radius: 7px;
   height: 350px;
@@ -79,43 +80,48 @@ const Card: FC<CardProps> = ({
     `perspective(900px) rotateX(${x}deg) rotateY(${y}deg) scale(${s})`
 
   return (
-    <CardBase
-      onClick={() => {
-        submit && submit(value)
-      }}
-      ref={cardRef}
-      selected={active}
-      unselected={unselected}
-      onPointerMove={({ clientX: x, clientY: y }) =>
-        setTilt({ xys: calc(x, y) })
-      }
-      onPointerLeave={() => setTilt({ xys: [0, 0, 1] })}
-      style={{
-        transform: tiltProps.xys.interpolate(trans),
-        ...colorProps
-      }}
-    >
-      {selectors && (
-        <Flex m={3} flexDirection="row" justifyContent="space-between">
-          <Text fontSize={5}>{`x${selectors.length}`}</Text>
-          <Flex flexDirection="column" alignItems="flex-end">
-            {selectors.map(name => (
-              <Text key={name}>{name}</Text>
-            ))}
-          </Flex>
-        </Flex>
-      )}
-      <Flex
+    <Button css={{ background: 'none', padding: 0 }}>
+      <CardBase
         px={2}
-        alignItems="flex-end"
-        justifyContent="flex-start"
-        css={{ height: '100%' }}
+        onClick={() => {
+          submit && submit(value)
+        }}
+        ref={cardRef}
+        selected={active}
+        unselected={unselected}
+        onPointerMove={({ clientX: x, clientY: y }) =>
+          setTilt({ xys: calc(x, y) })
+        }
+        onPointerLeave={() => setTilt({ xys: [0, 0, 1] })}
+        style={{
+          transform: tiltProps.xys.interpolate(trans),
+          ...colorProps
+        }}
       >
-        <Text fontSize={128} color={unselected ? 'gainsboro' : 'black'}>
-          {value}
-        </Text>
-      </Flex>
-    </CardBase>
+        <Flex m={3} flexDirection="row" justifyContent="space-between">
+          {selectors && (
+            <Fragment>
+              <Text fontSize={5}>{`x${selectors.length}`}</Text>
+              <Flex flexDirection="column" alignItems="flex-end">
+                {selectors.map(name => (
+                  <Text key={name}>{name}</Text>
+                ))}
+              </Flex>
+            </Fragment>
+          )}
+        </Flex>
+        <Flex
+          px={2}
+          alignItems="flex-end"
+          justifyContent="flex-start"
+          css={{ height: 'auto' }}
+        >
+          <Text fontSize={128} color={unselected ? 'gainsboro' : 'black'}>
+            {value}
+          </Text>
+        </Flex>
+      </CardBase>
+    </Button>
   )
 }
 
