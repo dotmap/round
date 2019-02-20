@@ -11,7 +11,7 @@ use Mix.Config
 # before starting your production server.
 config :round, RoundWeb.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [host: "localhost", port: {:system, "PORT"}],
+  url: [host: "round.dotmap.co", port: {:system, "PORT"}],
   cache_static_manifest: "priv/static/cache_manifest.json",
   server: true,
   root: ".",
