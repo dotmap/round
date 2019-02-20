@@ -1,4 +1,5 @@
 import { Component } from 'react'
+import { Edit3, Users, PieChart, Save } from 'react-feather'
 import { Box, Button, Card, Flex, Text } from '@rebass/emotion'
 import { Channel, ChannelCallback, Presence, Socket } from 'phoenix'
 
@@ -6,12 +7,21 @@ import Cards from './cards'
 import Footer from './footer'
 import { buildSocket } from '../utils/socket'
 import Participants from './participants'
-import { Content, FooterContainer, GridContainer, Header } from './grid'
+import {
+  Content,
+  FooterContainer,
+  GridContainer,
+  Header,
+  ParticipantsContainer
+} from './grid'
 
 import ElectModel from '../models/elect'
 import ResetModel from '../models/reset'
 import ShowModel from '../models/show'
 import EstimateModel from '../models/estimate'
+import IconButton from './icon-button'
+import Title from './title'
+import RevealButton from './reveal'
 
 interface EstimationProps {
   room: string
@@ -22,11 +32,19 @@ interface EstimationProps {
 class Estimation extends Component<EstimationProps> {
   public state = {
     estimate: '',
+    title: this.props.room
+      .toLowerCase()
+      .split('-')
+      .map(s => `${s.charAt(0).toUpperCase()}${s.substring(1)}`)
+      .join(' '),
+    editingTitle: false,
     leader: false,
     username: '',
+    pending: true,
     revealing: false,
     nameSelected: false,
-    participants: new Map<string, string>()
+    participants: new Map<string, string>(),
+    participantsMode: true
   }
 
   /* eslint-disable-next-line camelcase */
@@ -48,10 +66,12 @@ class Estimation extends Component<EstimationProps> {
     })
 
     this.channel.on('show', ({ show }: ShowModel) =>
-      this.setState({ revealing: show })
+      this.setState({ revealing: show, pending: false })
     )
 
     this.channel.on('reset', this.reset)
+
+    this.channel.on('update_title', ({ title }) => this.setState({ title }))
 
     this.channel
       .join()
@@ -84,13 +104,33 @@ class Estimation extends Component<EstimationProps> {
     user,
     estimate
   }) => {
-    this.setState({ participants: this.state.participants.set(user, estimate) })
+    this.setState({
+      participants: this.state.participants.set(user, estimate)
+    })
+    this.tallyEstimates()
+  }
+
+  private tallyEstimates = () => {
+    let votes = 0
+    this.state.participants.forEach(v => {
+      if (v.length > 0) votes++
+    })
+    if (votes === this.state.participants.size) {
+      this.setState({ pending: false })
+    }
   }
 
   private sendEstimate = (estimate: string) => {
     if (!this.state.revealing) {
       this.channel.push('estimate', { estimate, user: this.props.username })
       this.setState({ estimate })
+    }
+  }
+
+  private sendUpdateTitle = (title: string) => {
+    if (this.state.leader) {
+      this.channel.push('update_title', { title })
+      this.setState({ title, editingTitle: false })
     }
   }
 
@@ -115,6 +155,7 @@ class Estimation extends Component<EstimationProps> {
 
     this.setState({
       estimate: '',
+      pending: true,
       revealing: false,
       participants: resetParticipants
     })
@@ -122,45 +163,59 @@ class Estimation extends Component<EstimationProps> {
 
   public render () {
     const { estimateValues } = this.props
-    const { participants, estimate, revealing } = this.state
+    const {
+      participants,
+      participantsMode,
+      estimate,
+      revealing,
+      title,
+      leader,
+      pending,
+      editingTitle
+    } = this.state
 
     return (
-      <GridContainer mt={4}>
-        <Header width={1}>
-          <Card
-            boxShadow={[0]}
-            borderRadius="default"
-            py={3}
-            pl={4}
-            pr={3}
-            bg="white"
-            fontSize={5}
-            width={1}
-            css={{
-              fontWeight: 700,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between'
-            }}
-          >
-            <Box width={1} mr={3} css={{ hyphens: 'auto' }} contentEditable>
-              Meeting topic...
-            </Box>
-            <Button
-              color="black"
-              bg="gainsboro"
-              fontSize={3}
-              css={{
-                height: '100%'
-              }}
+      <GridContainer>
+        <Flex
+          justifyContent="center"
+          alignItems="center"
+          css={{ gridArea: 'edit' }}
+        >
+          {leader && (
+            <IconButton
+              active={editingTitle}
+              onClick={() => this.setState({ editingTitle: !editingTitle })}
             >
-              <Flex flexDirection="row">
-                <Text>Participant</Text>
-              </Flex>
-            </Button>
-          </Card>
+              {editingTitle ? <Save /> : <Edit3 />}
+            </IconButton>
+          )}
+        </Flex>
+        <Header width={1}>
+          <Title
+            leader={leader}
+            initialTitle={title}
+            editing={editingTitle}
+            submitTitle={this.sendUpdateTitle}
+          />
         </Header>
-        <Participants participants={participants} />
+        <Flex
+          justifyContent="center"
+          alignItems="center"
+          css={{ gridArea: 'graph' }}
+        >
+          <IconButton
+            onClick={() =>
+              this.setState({
+                participantsMode: !this.state.participantsMode
+              })
+            }
+          >
+            {participantsMode ? <PieChart /> : <Users />}
+          </IconButton>
+        </Flex>
+        <ParticipantsContainer>
+          <Participants participants={participants} open={participantsMode} />
+        </ParticipantsContainer>
         <Content
           flexDirection={['column']}
           alignItems="center"
@@ -177,6 +232,14 @@ class Estimation extends Component<EstimationProps> {
         <FooterContainer>
           <Footer />
         </FooterContainer>
+        {leader && (
+          <RevealButton
+            onReset={this.sendReset}
+            onReveal={this.sendShow}
+            pending={pending}
+            showReset={revealing}
+          />
+        )}
       </GridContainer>
     )
   }
